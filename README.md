@@ -16,22 +16,26 @@ This project provides the complete analytical pipeline for developing and valida
 
 ## Repository Structure
 
-├── data/ # Data processing scripts
-│ ├── Table_1_scale_characteristics.xlsx
-│ ├── Table_2_demo_characteristics.xlsx
-│ ├── Table_3_task_characteristics.xlsx
-│ ├── Table_4_original_game_and_scale_data.xlsx
-│ └── Table_5_game_data.csv
-├── analysis/
-│ ├── 01_irt_models.R # IRT model fitting and item analysis
-│ └── 02_plots.R # Normative scoring procedures
-├── functions/
-│ ├── irt_estimation.R # Custom IRT functions
-│ └── utility_functions.R # Helper functions
-├── output/
-│ ├── tables/ 
-│ └── figures/ 
-└── README.md
+- **data/**: Data files and processing scripts
+  - `Table_1_scale_characteristics.xlsx` - Scale descriptive statistics
+  - `Table_2_demo_characteristics.xlsx` - Participant demographic data
+  - `Table_3_task_characteristics.xlsx` - Task performance characteristics
+  - `Table_4_original_game_and_scale_data.xlsx` - Original game and scale data
+  - `Table_5_game_data.csv` - Raw game performance data
+
+- **analysis/**: Main analysis scripts
+  - `01_irt_models.R` - IRT model fitting and item analysis
+  - `02_plots.R` - Normative scoring procedures and visualization
+
+- **functions/**: Custom function definitions
+  - `irt_estimation.R` - Custom IRT functions for model estimation
+  - `utility_functions.R` - Helper functions for data processing and analysis
+
+- **output/**: Analysis outputs
+  - `tables/` - Generated tables for publication
+  - `figures/` - Generated figures for publication
+
+- **README.md**: Project documentation
 
 ## Quick Start
 ```r
