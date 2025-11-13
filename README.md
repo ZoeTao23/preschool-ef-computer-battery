@@ -26,11 +26,7 @@ This project provides the complete analytical pipeline for developing and valida
 - **analysis/**: Main analysis scripts
   - `01_irt_models.R` - IRT model fitting and item analysis
   - `02_plots.R` - Normative scoring procedures and visualization
-
-- **functions/**: Custom function definitions
-  - `irt_estimation.R` - Custom IRT functions for model estimation
-  - `utility_functions.R` - Helper functions for data processing and analysis
-
+  
 - **output/**: Analysis outputs
   - `tables/` - Generated tables for publication
   - `figures/` - Generated figures for publication
