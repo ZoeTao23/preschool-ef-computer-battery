@@ -40,10 +40,11 @@ source("analysis/irt.R")
 
 ### Prerequisites
 
-- R (version ≥ 4.1.0)
+- R (version ≥ 4.3.2)
 - Required R packages:
 
 ```r
-install.packages(c("mirt", "lavaan", "psych", "tidyverse", 
-                   "ggplot2", "knitr", "rmarkdown"))
+install.packages(c("openxlsx", "tidyverse", "compareGroups", "lavaan", 
+                   "semTools", "blandr", "ggplot2", "gridExtra", "purrr", 
+                   "ltm", "mice", "psych", "mirt", "scales"))
 ```
