@@ -4,7 +4,7 @@ This repository contains the analysis code for the study:
 
 **"Development and Validation of a Computer-Based Battery for Assessing Executive Function of Preschool Children in China: Score Development, Reliability, and Validity"**
 
-## 📋 Project Overview
+## Project Overview
 
 This project provides the complete analytical pipeline for developing and validating a computer-based executive function (EF) assessment battery for preschool children in China. The repository includes code for:
 
@@ -14,7 +14,7 @@ This project provides the complete analytical pipeline for developing and valida
 - **Measurement invariance** testing across demographic groups
 - **Score development** and normative procedures
 
-  ## 🏗️ Repository Structure
+## Repository Structure
 ├── data/ # Data processing scripts
 ├── analysis/
 │ ├── 01_irt_models.R # IRT model fitting and item analysis
@@ -31,7 +31,9 @@ This project provides the complete analytical pipeline for developing and valida
 ├── docs/ # Supplementary documentation
 └── README.md
 
-## 🚀 Quick Start
+## Quick Start
+```r
+source("analysis/irt.R")
 
 ### Prerequisites
 
