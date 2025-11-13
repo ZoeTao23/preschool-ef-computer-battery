@@ -15,25 +15,28 @@ This project provides the complete analytical pipeline for developing and valida
 - **Score development** and normative procedures
 
 ## Repository Structure
+
 ├── data/ # Data processing scripts
+│ ├── Table_1_scale_characteristics.xlsx
+│ ├── Table_2_demo_characteristics.xlsx
+│ ├── Table_3_task_characteristics.xlsx
+│ ├── Table_4_original_game_and_scale_data.xlsx
+│ └── Table_5_game_data.csv
 ├── analysis/
 │ ├── 01_irt_models.R # IRT model fitting and item analysis
-│ ├── 02_reliability.R # Reliability analyses
-│ ├── 03_validity.R # Validity evidence analyses
-│ ├── 04_measurement_invariance.R # Measurement invariance testing
-│ └── 05_score_development.R # Normative scoring procedures
+│ └── 02_plots.R # Normative scoring procedures
 ├── functions/
 │ ├── irt_estimation.R # Custom IRT functions
 │ └── utility_functions.R # Helper functions
 ├── output/
-│ ├── tables/ # Analysis tables for publication
-│ └── figures/ # Figures for publication
-├── docs/ # Supplementary documentation
+│ ├── tables/ 
+│ └── figures/ 
 └── README.md
 
 ## Quick Start
 ```r
 source("analysis/irt.R")
+```
 
 ### Prerequisites
 
@@ -43,3 +46,4 @@ source("analysis/irt.R")
 ```r
 install.packages(c("mirt", "lavaan", "psych", "tidyverse", 
                    "ggplot2", "knitr", "rmarkdown"))
+```
