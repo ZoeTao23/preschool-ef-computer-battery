@@ -22,7 +22,7 @@ This project provides the complete analytical pipeline for developing and valida
   - `Table_4_stimulated_game and scale data.csv` - Synthetic demographic, scale scores, and game performance data
   - `Table_5_stimulated_game_data.csv` - Synthetic game task-level performance records
 
-- **analysis/**: Main analysis scripts
+- **codes/**: Main analysis scripts
   - `IRT.R` - core code
   
 - **output/**: Analysis outputs
