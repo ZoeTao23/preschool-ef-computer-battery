@@ -34,9 +34,9 @@ if(T) {
   
   if(T) {
     
-    gold_name <- read.xlsx("./Table_1_scale_characteristics.xlsx") 
-    base_name <- read.xlsx('./Table_2_demo_characteristics.xlsx') 
-    game_name <- read.xlsx('./Table_3_task_characteristics.xlsx')[,4]
+    gold_name <- read.csv("./Table_1_scale_characteristics.csv") 
+    base_name <- read.csv('./Table_2_demo_characteristics.csv') 
+    game_name <- read.csv('./Table_3_task_characteristics.csv')[,4]
     
   }
   
@@ -46,11 +46,7 @@ if(T) {
   if(T) {
     
     dt <- 
-      read.csv("./Table_4_stimulated_game and scale data.csv") %>%
-      # read.xlsx(
-      #   './Table_4_stimulated_game_and_scale_data.xlsx',
-      #   na.strings = "NA",
-      # ) %>%
+      read.csv("./Table_4_stimulated_game_and_scale_data.csv") %>%
       mutate(Age = as.integer(Age)) 
     
     # Extract baseline demographic variables
@@ -1294,4 +1290,5 @@ if(T) {
   
   
 }
+
 
