@@ -34,9 +34,9 @@ if(T) {
   
   if(T) {
     
-    gold_name <- read.csv("./Table_1_scale_characteristics.csv") 
-    base_name <- read.csv('./Table_2_demo_characteristics.csv') 
-    game_name <- read.csv('./Table_3_task_characteristics.csv')[,4]
+    gold_name <- read.csv("../data/Table_1_scale_characteristics.csv") 
+    base_name <- read.csv("../data/Table_2_demo_characteristics.csv") 
+    game_name <- read.csv("../data/Table_3_task_characteristics.csv")[,4]
     
   }
   
@@ -46,13 +46,17 @@ if(T) {
   if(T) {
     
     dt <- 
-      read.csv("./Table_4_stimulated_game_and_scale_data.csv") %>%
+      read.csv("../data/Table_4_stimulated_game_and_scale_data.csv") %>%
+      # read.xlsx(
+      #   './Table_4_stimulated_game_and_scale_data.xlsx',
+      #   na.strings = "NA",
+      # ) %>%
       mutate(Age = as.integer(Age)) 
     
     # Extract baseline demographic variables
     baseline <- 
       dt %>%
-      dplyr::select(base_name$Variable)
+      dplyr::select(base_name$Variable[c(1:24)])
     
     # Extract gold standard assessment variables
     gold <- 
@@ -70,7 +74,7 @@ if(T) {
   if(T) {
     
     game_data <- 
-      read.csv('./Table_5_stimulated_game_data.csv') %>%
+      read.csv('../data/Table_5_stimulated_game_data.csv') %>%
       mutate(
         games = case_when(
           practice_id == 120 ~ "Feed",
@@ -372,6 +376,7 @@ if(T) {
       )
     
     print(p)
+    # ggsave("../results/figures/Figure_1_TIF_curve_for_tasks.png", plot = p, width = 10, height = 8)       
   }
     
   feed <- irt_score(irt_models$Feed, "Feed", test_data)
@@ -395,7 +400,7 @@ if(T) {
     writeData(wb, sheet = name, result[[name]], rowNames = TRUE)
   }
   
-  saveWorkbook(wb, 'IRT_SCORE.xlsx', overwrite = TRUE)
+  saveWorkbook(wb, '../results/tables/IRT_SCORE.xlsx', overwrite = TRUE)
   
   
   
@@ -418,7 +423,7 @@ if(T) {
     writeData(wb, sheet = name, result[[name]], rowNames = TRUE)
   }
   
-  saveWorkbook(wb, 'RE_IRT_SCORE.xlsx', overwrite = TRUE)
+  saveWorkbook(wb, '../results/tables/RE_IRT_SCORE.xlsx', overwrite = TRUE)
   
 }
 
@@ -444,13 +449,13 @@ if(T) {
                       method = c(paste(paste0(game_name,'=NA',collapse = ','),paste0(gold_name[,1],'=NA',collapse = ','),sep = ',' )),
                       data = data) ;res02
   
-  export2xls(res01,'TABLE1.xlsx')
-  export2xls(res02,'TABLE2.xlsx')
+  export2xls(res01,'../results/tables/TABLE1.xlsx')
+  export2xls(res02,'../results/tables/TABLE2.xlsx')
   
   
   a <- descrTable( Age ~.,show.all = T, data = data)
-  export2xls(a,'summary.xlsx')
-  export2html(a,'summary.html')
+  export2xls(a,'../results/tables/summary.xlsx')
+  export2html(a,'../results/tables/summary.html')
   
 }
 
@@ -525,7 +530,7 @@ if(T) {
     )
   
   print(p1)
-  # ggsave("Figure_2_IRT_scores_for_tasks.png", plot = p1, width = 10, height = 8)       
+  # ggsave("../results/figures/Figure_2_IRT_scores_for_tasks.png", plot = p1, width = 10, height = 8)       
   
 }
   
@@ -687,7 +692,7 @@ if(T) {
     
     
     ### Export results _write.xlsx
-    write.xlsx(result,'CFA.xlsx', rownames = TRUE, sheetName = names(result))
+    write.xlsx(result,'../results/tables/CFA.xlsx', rownames = TRUE, sheetName = names(result))
     
     ### Export results _writeDATA, can export sheet names
     wb <- createWorkbook()
@@ -695,7 +700,7 @@ if(T) {
       addWorksheet(wb, name)
       writeData(wb, sheet = name, result[[name]], rowNames = TRUE)
     }
-    saveWorkbook(wb, 'CFA.xlsx', overwrite = TRUE)              
+    saveWorkbook(wb, '../results/tables/CFA.xlsx', overwrite = TRUE)              
     
     
     #--------------------------#
@@ -759,7 +764,7 @@ if(T) {
     # Generate and output results of all combinations
     all_combinations_result <- generate_all_combinations()
     print(all_combinations_result)
-    #write.xlsx(all_combinations_result,'CFA_random_fit.xlsx',rownames = TRUE)
+    #write.xlsx(all_combinations_result,'../results/tables/CFA_random_fit.xlsx',rownames = TRUE)
     
     
     
@@ -870,7 +875,7 @@ if(T) {
   measureinvar$age <- group_diff(data.frame(irt_SCORE,Age = data$Age), "Age") 
   
   
-  write.xlsx(measureinvar,'TABLE5.xlsx')
+  write.xlsx(measureinvar,'../results/tables/TABLE5.xlsx')
   
   
 }
@@ -990,7 +995,7 @@ if(T) {
     addWorksheet(wb, name)
     writeData(wb, sheet = name, cor[[name]], rowNames = TRUE)
   }
-  saveWorkbook(wb, 'criteria2.xlsx', overwrite = TRUE)  
+  saveWorkbook(wb, '../results/tables/criteria2.xlsx', overwrite = TRUE)  
   
   
   
@@ -1214,7 +1219,7 @@ if(T) {
   result$AGE3 <- relia(colbind3)
   result$AGE4 <- relia(colbind4)
   result$AGE5 <- relia(colbind5)
-  write.xlsx(result,'TABLE7.xlsx')
+  write.xlsx(result,'../results/tables/TABLE7.xlsx')
   
   #---------Visualization of test-retest correlation results - scatter plot--------#                  
   # Function to create scatter plot for a given game
@@ -1285,10 +1290,9 @@ if(T) {
   
   #chi-square difference test
   diff <- lavaan::lavTestLRT(fit.Configural, fit.Metric, fit.Scalar)  #anova
-  write.xlsx(diff,'TABLE8.xlsx')  
+  write.xlsx(diff,'../results/tables/TABLE8.xlsx')  
   
   
   
 }
-
 
