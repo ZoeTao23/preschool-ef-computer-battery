@@ -19,8 +19,8 @@ This project provides the complete analytical pipeline for developing and valida
   - `Table_1_scale_characteristics.xlsx` - Scale variable descriptions
   - `Table_2_demo_characteristics.xlsx` - Demographic variable descriptions
   - `Table_3_task_characteristics.xlsx` - Game task variable descriptions
-  - `Table_4_original_game_and_scale_data.xlsx` - Synthetic demographic, scale scores, and game performance data
-  - `Table_5_game_data.csv` - Synthetic game task-level performance records
+  - `Table_4_stimulated_game and scale data.csv` - Synthetic demographic, scale scores, and game performance data
+  - `Table_5_stimulated_game_data.csv` - Synthetic game task-level performance records
 
 - **analysis/**: Main analysis scripts
   - `IRT.R` - core code
