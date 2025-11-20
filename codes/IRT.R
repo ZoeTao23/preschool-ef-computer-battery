@@ -47,10 +47,6 @@ if(T) {
     
     dt <- 
       read.csv("../data/Table_4_stimulated_game_and_scale_data.csv") %>%
-      # read.xlsx(
-      #   './Table_4_stimulated_game_and_scale_data.xlsx',
-      #   na.strings = "NA",
-      # ) %>%
       mutate(Age = as.integer(Age)) 
     
     # Extract baseline demographic variables
@@ -1295,4 +1291,5 @@ if(T) {
   
   
 }
+
 
