@@ -1,4 +1,5 @@
 
+
 # 0. DATA PREPARATION =========
 
 ## (1) Load required packages --------
@@ -45,10 +46,11 @@ if(T) {
   if(T) {
     
     dt <- 
-      read.xlsx(
-        './Table_4_original_game_and_scale_data.xlsx',
-        na.strings = "NA",
-      ) %>%
+      read.csv("./Table_4_stimulated_game and scale data.csv") %>%
+      # read.xlsx(
+      #   './Table_4_stimulated_game_and_scale_data.xlsx',
+      #   na.strings = "NA",
+      # ) %>%
       mutate(Age = as.integer(Age)) 
     
     # Extract baseline demographic variables
@@ -72,7 +74,7 @@ if(T) {
   if(T) {
     
     game_data <- 
-      read.csv('./Table_5_game_data.csv') %>%
+      read.csv('./Table_5_stimulated_game_data.csv') %>%
       mutate(
         games = case_when(
           practice_id == 120 ~ "Feed",
@@ -230,7 +232,7 @@ if(T) {
     # fit IRT models for all tasks
     irt_models <- 
       lapply(
-        c('Feed', 'Fish', 'Pets', 'Card', 'Biscuit', 'Magical'),
+        game_name,
         function(task_name) {
           irtfun(
             data = test_data, 
@@ -239,7 +241,7 @@ if(T) {
         }
       )
     
-    names(irt_models) <- c('Feed', 'Fish', 'Pets', 'Card', 'Biscuit', 'Magical') 
+    names(irt_models) <- game_name
     
     
     # Display model parameters and fit statistics
@@ -532,9 +534,9 @@ if(T) {
 }
   
 
-# 2.VALIDITY ANALYSIS ========= 
+# 2. VALIDITY ANALYSIS ========= 
 
-# (1) Construct validity --------
+## (1) Construct validity --------
 
   if(T) {
     
@@ -557,14 +559,14 @@ if(T) {
       complete_data <- imputed_list[[i]] <-  complete(imp, action = i)
     
       form = 'IC=~Feed+Fish
-                       WM=~Card+Magical
-                       FS=~Pets+Biscuit'
+              WM=~Card+Magical
+              FS=~Pets+Biscuit'
       
       fit <- cfa(form,data = complete_data, std.lv=TRUE, estimator = 'WLS')
       CFL_list <- c(CFL_list, fitMeasures(fit, "cfi"))
       TLI_list <- c(TLI_list, fitMeasures(fit, "tli"))
-      CFL_var_list <- c(CFL_var_list, lavInspect(fit, "vcov")[1,1])  # 获取CFL的方差
-      TLI_var_list <- c(TLI_var_list, lavInspect(fit, "vcov")[2,2])  # 获取TLI的方差
+      CFL_var_list <- c(CFL_var_list, lavInspect(fit, "vcov")[1,1])  # CFL 
+      TLI_var_list <- c(TLI_var_list, lavInspect(fit, "vcov")[2,2])  # TLI
     }
     
     
@@ -592,15 +594,19 @@ if(T) {
     list(combined_CFL = combined_CFL, combined_CFL_SE = combined_CFL_SE,
          combined_TLI = combined_TLI, combined_TLI_SE = combined_TLI_SE)
     
+    user_id <- imputed_list[[1]][, 1]
+    numeric_columns_list <- lapply(imputed_list, function(df) df[, -1])
+    numeric_avg <- as.data.frame(Reduce("+", numeric_columns_list) / length(numeric_columns_list))
     
-    irt_SCORE_fill <- as.data.frame(Reduce("+", imputed_list) / length(imputed_list))
+    irt_SCORE_fill <- cbind(user_id, numeric_avg)
+    colnames(irt_SCORE_fill)[1] <- colnames(irt_SCORE)[1]
     
     
     #-----------------#
     #----don't need fit
     #-----------------#
     CFA_dt <- irt_SCORE_fill
-    cor_matrix <- cor(CFA_dt, use = "pairwise.complete.obs")
+    cor_matrix <- cor(CFA_dt[,-1], use = "pairwise.complete.obs")
     FS <- psych::alpha(CFA_dt [,c(4,6)])
     IC <- psych::alpha(CFA_dt [,c(2,3)])
     WM <- psych::alpha(CFA_dt [,c(5,7)])
@@ -614,8 +620,8 @@ if(T) {
     fit_1f <- cfa(form_1f, data = CFA_dt, std.lv=TRUE, estimator = 'WLS')
     
     form_3f = 'IC=~Feed+Fish
-                           WM=~Magical+Card
-                           FS=~Pets+Biscuit'
+               WM=~Magical+Card
+               FS=~Pets+Biscuit'
     fit_3f <- cfa(form_3f,data = CFA_dt, std.lv=TRUE, estimator = 'WLS')
     
     
@@ -795,37 +801,51 @@ if(T) {
     # Calculate total score
     CFA_dt$ts_check <- loadings["z_IC"] * CFA_dt$z_IC + loadings["z_FS"] * CFA_dt$z_FS + loadings["z_WM"] * CFA_dt$z_WM
     
-    #----（one-factor CFA）----#
+    
+    #----(IRT total score)----#
+    irt_SCORE_fill$total_score_IRT <- rowMeans(irt_SCORE_fill[,game_name])
+    
+    #----(one-factor CFA, 3 dimensions)----#
     RE_dimen_score_CFA <- 
       CFA_dt %>%
-      dplyr::select(user_id,WM_score,FS_score,IC_score)%>%
-      rename(WM_card_magical=WM_score,FS_feed_flanker=FS_score,IC_biscuit_pets=IC_score)
+      dplyr::select(user_id, WM_score, FS_score, IC_score)%>%
+      rename(WM_card_magical=WM_score, FS_feed_flanker=FS_score, IC_biscuit_pets=IC_score)
     
     form = 'total=~FS_feed_flanker+WM_card_magical+IC_biscuit_pets'
     fit <- cfa(form, data = RE_dimen_score_CFA, std.lv=TRUE)
     lavPredict(fit) 
-    RE_dimen_score_CFA$total_score <- lavPredict(fit) 
-    irt_SCORE_fill$total_score_CFA <- RE_dimen_score_CFA$total_score
+    # RE_dimen_score_CFA$total_score <- lavPredict(fit) 
+    irt_SCORE_fill$total_score_CFA <- lavPredict(fit) 
     
+    
+    #----(one-factor CFA, 6 games)----#
     form = 'total=~Feed+Fish+Card+Magical+Biscuit+Pets'
     fit <- cfa(form, data = CFA_dt, std.lv=TRUE)
     lavPredict(fit) 
     irt_SCORE_fill$total_six_fit_onefac <- lavPredict(fit)
     
+    
+    #----(one-factor CFA, remove magical)----#
     form = 'total=~Feed+Fish+Pets+Card+Biscuit'
     fit <- cfa(form, data = CFA_dt, std.lv=TRUE)
     irt_SCORE_fill$ts_delete_magical <- lavPredict(fit)
     
+    
+    #----(one-factor CFA, remove card)----#
     form = 'total=~Feed+Fish+Pets+Biscuit+Magical'
     fit <- cfa(form, data = CFA_dt, std.lv=TRUE)
     irt_SCORE_fill$ts_delete_card <- lavPredict(fit)
     
+    
+    #----(one-factor CFA, remove card and magical)----#
     form = 'total=~Feed+Fish+Pets+Biscuit'
     fit <- cfa(form, data = CFA_dt, std.lv=TRUE)
     irt_SCORE_fill$ts_delete_cardmagical <- lavPredict(fit)
+    
+    
   }
 
-# (2) Measurement invariance ---------
+## (2) Measurement invariance ---------
 
 if(T) {
   
@@ -850,8 +870,8 @@ if(T) {
   }
   
   measureinvar <- list(gender=NULL, age=NULL)
-  measureinvar$gender <- group_diff(data, "user_gender")
-  measureinvar$age <- group_diff(data, "Age") 
+  measureinvar$gender <- group_diff(data.frame(irt_SCORE,user_gender = data$user_gender), "user_gender")
+  measureinvar$age <- group_diff(data.frame(irt_SCORE,Age = data$Age), "Age") 
   
   
   write.xlsx(measureinvar,'TABLE5.xlsx')
@@ -860,43 +880,43 @@ if(T) {
 }
 
 
-# (3) Criteria validity --------
+## (3) Criteria validity --------
 if(T) {
   
   
-  #============方法一：相关系数矩阵
+  # ============ Method 1: Correlation Matrix Approach 
   
   crite <- function(data) {
     
     alpha <- 0.05
     
-    # 创建一个空的矩阵用于存储结果
+    # Empty matrix for storing results
     significant_corr_matrix <- matrix("", nrow = ncol(data), ncol = ncol(data))
     
-    # 循环计算相关系数并判断显著性
+    # Loop through variables to calculate correlations
     for(i in 1:ncol(data)) {
       for(j in 1:ncol(data)) {
         if(i != j) {
-          # 计算标准差并检查是否为零
+          # Check for zero standard deviation
           sd_i <- sd(data[, i], na.rm = TRUE)
           sd_j <- sd(data[, j], na.rm = TRUE)
           if(sd_i != 0 && sd_j != 0) {
-            # 计算相关系数和p值
+            # Calculate correlation and p-value
             cor_result <- cor.test(data[,i], data[,j], use = "pairwise.complete.obs")
             cor_val <- cor_result$estimate
             p_val <- cor_result$p.value
             
-            # 判断相关性是否显著
+            # Format correlation with significance star
             if(!is.na(p_val) && p_val < alpha) {
               significant_corr_matrix[i,j] <- sprintf("%.2f*", cor_val)
             } else {
               significant_corr_matrix[i,j] <- sprintf("%.2f", cor_val)
             }
           } else {
-            significant_corr_matrix[i,j] <- "NA"  # 如果标准差为零，将相关系数设为 "NA"
+            significant_corr_matrix[i,j] <- "NA"  # Handle zero variance cases
           }
         } else {
-          significant_corr_matrix[i,j] <- 1  # 对角线上的值设为1，表示每个变量与自己的相关系数为1
+          significant_corr_matrix[i,j] <- 1  # Diagonal elements (self-correlation)
         }
       }
     }
@@ -906,17 +926,17 @@ if(T) {
   
   data <- 
     data %>% 
-    inner_join(.,irt_SCORE_fill, by="user_id")
+    inner_join(., irt_SCORE_fill[,-c(2:7)], by="user_id")
   
   delete_magical <- cor.test(data$MA_all,data$ts_delete_magical,use = "pairwise.complete.obs")[["estimate"]] 
   delete_card <- cor.test(data$MA_all,data$ts_delete_card,use = "pairwise.complete.obs")[["estimate"]] 
   delete_cardmagical <- cor.test(data$MA_all,data$ts_delete_cardmagical,use = "pairwise.complete.obs")[["estimate"]] 
-  onefactotal <- cor.test(data$MA_all,irt_SCORE_fill$total_onefac ,use = "pairwise.complete.obs")[["estimate"]] 
-  onefactotal_delete_magical <- cor.test(data$MA_all,irt_SCORE_fill$total_onefac ,use = "pairwise.complete.obs")[["estimate"]] 
+  # onefactotal <- cor.test(data$MA_all, irt_SCORE_fill$total_onefac ,use = "pairwise.complete.obs")[["estimate"]] 
+  # onefactotal_delete_magical <- cor.test(data$MA_all, irt_SCORE_fill$total_onefac ,use = "pairwise.complete.obs")[["estimate"]] 
   six_onefac <- cor.test(data$MA_all,data$total_six_fit_onefac ,use = "pairwise.complete.obs")[["estimate"]] 
   
   
-  cor <- cor.test(data$MA_all,data$total_six_fit_onefac ,use = "pairwise.complete.obs")
+  cor <- cor.test(data$MA_all, data$total_six_fit_onefac ,use = "pairwise.complete.obs")
   correlation <- cor$estimate
   cilower <- cor$conf.int[1]
   ciupper <- cor$conf.int[2]
@@ -946,18 +966,21 @@ if(T) {
               label = caption ,  color = "black", size = 4 ,fontface="bold" );p
   
   
-  # 2.潜变量层面
+  
+  # ============ Method 2: Latent Variable Correlations 
   form = 'IC =~ Feed+Fish
-                      WM =~ Card+Magical
-                      FS =~ Pets+Biscuit 
-                      GOLD =~ MA_all'
-  fit_valid <- cfa(form, data, std.lv=TRUE)
+          WM =~ Card+Magical
+          FS =~ Pets+Biscuit 
+          GOLD =~ MA_all'
+  
+  # Fit confirmatory factor analysis model
+  fit_valid <- cfa(form, data.frame(irt_SCORE_fill, MA_all=data$MA_all), std.lv=TRUE)
   cor2 <- lavaan::lavInspect(fit_valid, "cov.lv")
   
   
-  # 整理结果
+  # Organize correlation results
   cor <- list(cor=NULL, cor_3=NULL, cor_4=NULL, cor_5=NULL, cor_latent=NULL)
-  crite_data <- data[,26:length(data)]
+  crite_data <- data[, which(colnames(data) %in% c("MA_all","gm_ma","fm_ma","ab_ma","sl_ma","sb_ma", game_name))]
   cor$cor <- crite(crite_data)
   cor$cor_latent <- cor2
   
@@ -965,9 +988,7 @@ if(T) {
   colnames(cor$cor) <- names(crite_data)
   
   
-  
-  
-  #导出，可以导出sheetname
+  # Export results to Excel
   wb <- createWorkbook()
   for (name in names(cor)) {
     addWorksheet(wb, name)
@@ -977,7 +998,7 @@ if(T) {
   
   
   
-# 3.reliability analysis =======
+# 3. RELIABILITY ANALYSIS =======
   
 
   imp <- mice(RE_irt_SCORE, m = 5, method = 'pmm', maxit = 50, seed = 500)
@@ -988,17 +1009,24 @@ if(T) {
     RE_imputed_list[[i]] <- complete(imp, action = i)
   }
   
-  RE_irt_SCORE_fill <- as.data.frame(Reduce("+", RE_imputed_list) / length(RE_imputed_list))
+  RE_user_id <- RE_imputed_list[[1]][, 1]
+  RE_numeric_columns_list <- lapply(RE_imputed_list, function(df) df[, -1])
   
+  RE_numeric_avg <- as.data.frame(Reduce("+", RE_numeric_columns_list) / length(RE_numeric_columns_list))
+  
+  RE_irt_SCORE_fill <- cbind(RE_user_id, RE_numeric_avg)
+  colnames(RE_irt_SCORE_fill)[1] <- colnames(RE_irt_SCORE)[1]
+  
+  RE_irt_SCORE_fill$total_score_IRT <- rowMeans(RE_irt_SCORE_fill[,c(2:7)])
+    
   colbind <- left_join(irt_SCORE_fill, RE_irt_SCORE_fill, by = "user_id")
-  cols <- c(game_name[1],'Fish',game_name[3:6],'total_score_IRT')    
-  del <- c(-0.044,0.005 ,0.002 ,-0.119,-0.149,-0.359,-1)
+  cols <- c(game_name, "total_score_IRT")    
+  del <- c(-0.044, 0.005, 0.002, -0.119, -0.149, -0.359, -1)
   
   #----Total score correlation-----#
   cor_result <- cor.test(colbind$total_score_IRT.x, colbind$total_score_IRT.y)
   
-  
-  
+
   
   # Method 1: Pearson correlation
   relia <- function(data){
@@ -1122,11 +1150,11 @@ if(T) {
     return(result)
   }
   
-  result <- list(ALL=NULL,AGE3=NULL,AGE4=NULL,AGE5=NULL)
+  result <- list(ALL=NULL, AGE3=NULL, AGE4=NULL, AGE5=NULL)
   result$ALL <- relia(colbind)
   
   # Group correlation
-  colbind_group <- left_join(colbind,data[,1:5],by = "user_id")
+  colbind_group <- left_join(colbind, data[,1:5], by = "user_id")
   relia_group <- function(data){
     
     result <- data.frame(matrix(ncol = 8, nrow = length(cols))) 
@@ -1182,11 +1210,11 @@ if(T) {
     
   }
   
-  result <- list(ALL=NULL,AGE3=NULL,AGE4=NULL,AGE5=NULL)
+  result <- list(ALL=NULL, AGE3=NULL, AGE4=NULL, AGE5=NULL)
   result$ALL <- relia_group(colbind_group)
-  colbind3 <- colbind[colbind$Age == 3,]
-  colbind4 <- colbind[colbind$Age == 4,]
-  colbind5 <- colbind[colbind$Age == 5,]
+  colbind3 <- colbind[colbind_group$Age == 3,]
+  colbind4 <- colbind[colbind_group$Age == 4,]
+  colbind5 <- colbind[colbind_group$Age == 5,]
   result$AGE3 <- relia(colbind3)
   result$AGE4 <- relia(colbind4)
   result$AGE5 <- relia(colbind5)
@@ -1227,8 +1255,8 @@ if(T) {
   }
   
   # Create scatter plots for all games
-  games <- c("Feed", "Fish", "Pets", "Card", "Biscuit", "Magical")
-  plots <- lapply(games, function(game) create_scatter_plot(colbind, game))
+  # games <- c("Feed", "Fish", "Pets", "Card", "Biscuit", "Magical")
+  plots <- lapply(game_name, function(game) create_scatter_plot(colbind, game))
   
   # Arrange the plots in a 3x2 grid
   grid.arrange(grobs = plots, ncol = 3, nrow = 2)
@@ -1245,8 +1273,8 @@ if(T) {
   
   #CFA model 
   form_3f = '   IC =~ Feed+Fish
-                                WM =~ Card+Magical  
-                                FS =~ Pets+Biscuit   '    
+                WM =~ Card+Magical  
+                FS =~ Pets+Biscuit   '    
   
   #configural invariance（costrain factor structure）
   fit.Configural <- cfa(form_3f, data = rowbind, group = "time", meanstructure = TRUE) #Configural Invariance
