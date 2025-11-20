@@ -33,7 +33,7 @@ This project provides the complete analytical pipeline for developing and valida
 
 ## Quick Start
 ```r
-source("analysis/irt.R")
+source("codes/IRT.R")
 ```
 
 ### Prerequisites
