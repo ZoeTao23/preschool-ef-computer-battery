@@ -23,7 +23,7 @@ This project provides the complete analytical pipeline for developing and valida
 - **codes/**: Main analysis scripts
   - `IRT.R` - core code
   
-- **output/**: Analysis outputs
+- **results/**: Analysis outputs (show an example)
   - `tables/` - Generated tables for publication
   - `figures/` - Generated figures for publication
 
