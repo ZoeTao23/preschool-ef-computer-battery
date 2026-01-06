@@ -1,7 +1,7 @@
 # Computer-Based Executive Function Battery for Chinese Preschool Children
 
 This repository contains the analysis code for the research **"Development and Validation of a Computer-Based Battery for Assessing Executive Function of Preschool Children in China: Score Development, Reliability, and Validity"**
-![Study Designs Overview](workflow.png){:width="400px"}
+<img src="workflow.png" alt="Study Designs Overview" width="400" height="300">
 ## Project Overview
 
 This project provides the complete analytical pipeline for developing and validating a computer-based executive function (EF) assessment battery for preschool children in China. The repository includes code for:
