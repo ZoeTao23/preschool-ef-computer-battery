@@ -1,17 +1,16 @@
-# Development and Validation of a Computer-Based Battery for Assessing Executive Function of Preschool Children in China
+# Development and Evaluation of a Child-Friendly Computer-Based Battery Derived From Executive-Function Paradigms in Chinese Preschool Children
 ![Overview](workflow.png)
-This repository contains the analysis code for the research **Computer-Based Executive Function Battery for Chinese Preschool Children**
+This repository contains the analytical code used to examine the psychometric properties of a newly developed **computer-based battery** designed to capture EF-related cognitive control in Chinese preschoolers aged 3–6 years.
+
 ## Project Overview
+This project documents the exploratory analytical process for evaluating a a digital assessment battery adapted for young children. The repository includes code for the following analyses
 
-This project provides the complete analytical pipeline for developing and validating a computer-based executive function (EF) assessment battery for preschool children in China. The repository includes code for:
-
-- **IRT model development** and parameter estimation
-- **Descriptive analysis** for baseline characteristics and task score
-- **Validity analysis**(construct validity, criterion validity, measurement invariance)
-- **Reliability analysis** (internal consistency, test-retest reliability, longitudinal measurement invariance)
+- **Descriptive Statistics**: Analysis of baseline characteristics and performance distributions across different age groups.
+- **Item Response Theory (IRT) Analysis**: Implementation of 2-Parameter Logistic (2PL) models for parameter estimation and task evaluation.
+- **Psychometric Evaluation**：Assessment of the battery’s internal structure (CFA), internal consistency, and associations with general developmental status.
+- **Stability and Invariance Testing**: Evaluation of test-retest reliability and measurement invariance across repeated assessments.
 
 ## Repository Structure
-
 - **data/**: Data files and processing scripts
   - `Table_1_scale_characteristics.xlsx` - Scale variable descriptions
   - `Table_2_demo_characteristics.xlsx` - Demographic variable descriptions
